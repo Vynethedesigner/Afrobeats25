@@ -1,0 +1,237 @@
+.hero-section {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    background-color: #000;
+    overflow: hidden;
+    color: var(--color-text-primary);
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+}
+
+.hero-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-text-container {
+    text-align: center;
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    z-index: 10;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: var(--space-6);
+    letter-spacing: -0.02em;
+}
+
+.hero-powered {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.hero-powered strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+}
+
+.powered-logo-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: #333;
+    border-radius: 50%;
+    margin-left: 2px;
+}
+
+/* Bottom Area */
+.bottom-area {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 55vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 0;
+}
+
+.hero-grid-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    /* Hide overflow for marquee */
+    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+
+/* The horizontal scrolling strip container */
+.hero-album-strip {
+    overflow: visible;
+    width: 100%;
+    height: 100%;
+    padding: var(--space-8) var(--space-8) 0;
+    display: flex;
+    align-items: flex-end;
+}
+
+/* The inner track that animates */
+.album-strip-track {
+    display: flex;
+    gap: var(--space-6);
+    width: max-content;
+    align-items: flex-end;
+    animation: scroll-left 60s linear infinite;
+    will-change: transform;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-33.333%);
+        /* Move 1/3 since we have 3 sets */
+    }
+}
+
+.album-strip-track:hover {
+    animation-play-state: paused;
+}
+
+.strip-album-cover {
+    width: 28vh;
+    aspect-ratio: 1;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    flex-shrink: 0;
+    opacity: 1;
+    transition: transform 0.3s ease;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    margin-bottom: 0;
+}
+
+.strip-album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Stagger Effect: Heights only */
+.strip-album-cover:nth-child(odd) {
+    transform: none;
+    height: 38vh;
+    width: 38vh;
+}
+
+.strip-album-cover:nth-child(even) {
+    transform: none;
+    height: 30vh;
+    width: 30vh;
+}
+
+.strip-album-cover:nth-child(3n) {
+    transform: none;
+    height: 34vh;
+    width: 34vh;
+}
+
+.strip-album-cover:hover {
+    z-index: 10;
+    transform: scale(1.05) !important;
+}
+
+/* Button positioned over the albums */
+.scroll-pill-container {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    pointer-events: none;
+}
+
+.scroll-pill {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    color: var(--color-text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 768px) {
+    .bottom-area {
+        height: 45vh;
+    }
+
+    .album-strip-track {
+        animation-duration: 40s;
+    }
+
+    .strip-album-cover {
+        width: 200px;
+        height: 200px;
+    }
+
+    .strip-album-cover:nth-child(odd) {
+        width: 240px;
+        height: 240px;
+        transform: none;
+    }
+
+    .strip-album-cover:nth-child(3n) {
+        height: 220px;
+        width: 220px;
+        transform: none;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        padding: 0 var(--space-4);
+    }
+
+    .hero-text-container {
+        top: 25%;
+    }
+}

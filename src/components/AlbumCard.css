@@ -1,0 +1,150 @@
+.album-card {
+    position: relative;
+    cursor: pointer;
+    background: transparent;
+    transition: none;
+    break-inside: avoid;
+    margin-bottom: var(--space-8);
+}
+
+/* Irregular Grid Variations (7-item pattern) */
+.album-card:nth-child(7n + 1) .album-card-image-container {
+    aspect-ratio: 1;
+    /* Square */
+}
+
+.album-card:nth-child(7n + 2) .album-card-image-container {
+    aspect-ratio: 3 / 4;
+    /* Tall */
+}
+
+.album-card:nth-child(7n + 3) .album-card-image-container {
+    aspect-ratio: 1;
+    /* Square */
+}
+
+.album-card:nth-child(7n + 4) .album-card-image-container {
+    aspect-ratio: 4 / 3;
+    /* Short */
+}
+
+.album-card:nth-child(7n + 5) .album-card-image-container {
+    aspect-ratio: 2 / 3;
+    /* Very Tall */
+}
+
+.album-card:nth-child(7n + 6) .album-card-image-container {
+    aspect-ratio: 1;
+    /* Square */
+}
+
+.album-card:nth-child(7n + 7) .album-card-image-container {
+    aspect-ratio: 4 / 5;
+    /* Mildly Tall */
+}
+
+.album-card:hover {
+    transform: none;
+}
+
+.album-card-image-container {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: var(--space-2);
+    background: #111;
+}
+
+.album-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.album-card:hover .album-card-image {
+    opacity: 0.8;
+}
+
+/* Overlay & Button */
+.album-card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 8px;
+    pointer-events: none;
+}
+
+.add-to-top5-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    pointer-events: auto;
+}
+
+.album-card:hover .add-to-top5-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.add-to-top5-btn:hover {
+    transform: scale(1.1) translateY(0);
+}
+
+.add-to-top5-btn.added {
+    opacity: 1;
+    transform: translateY(0);
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+/* Info */
+.album-card-info {
+    padding: 0;
+    text-align: left;
+}
+
+.album-card-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.album-card-artist {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 400;
+}
+
+.album-card-palette {
+    display: none;
+}
+
+.album-card-badge {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    padding: 2px 6px;
+    background: var(--color-accent);
+    color: var(--color-bg);
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 4px;
+    text-transform: uppercase;
+    pointer-events: none;
+}
