@@ -1,34 +1,33 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams, Navigate } from 'react-router-dom';
+import { albums } from '../data/albums';
+import { Top5Panel } from '../components/Top5Panel';
 import type { Album } from '../types';
-import './AlbumModal.css';
+import '../components/AlbumModal.css'; // Reusing styles for now
 
-interface AlbumModalProps {
-    album: Album;
-    onClose: () => void;
+interface AlbumDetailsProps {
     onAddToTop5: (album: Album) => void;
-    isInTop5: boolean;
+    isInTop5: (id: string) => boolean;
+    top5: Album[];
+    onRemoveFromTop5: (id: string) => void;
+    onClearTop5: () => void;
+    onReorderTop5: (albums: Album[]) => void;
 }
 
-export function AlbumModal({ album, onClose, onAddToTop5, isInTop5 }: AlbumModalProps) {
-    const modalRef = useRef<HTMLDivElement>(null);
+export function AlbumDetails({ onAddToTop5, isInTop5, top5, onRemoveFromTop5, onClearTop5, onReorderTop5 }: AlbumDetailsProps) {
+    const { id } = useParams<{ id: string }>();
     const [palette, setPalette] = useState<string[]>([]);
 
-    // Close on Escape key
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onClose();
-        };
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [onClose]);
+    const album = albums.find(a => a.id === id);
 
-    // Prevent body scroll when modal is open
+    if (!album) {
+        return <Navigate to="/" replace />;
+    }
+
+    // Scroll to top on mount
     useEffect(() => {
-        document.body.style.overflow = 'hidden';
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, []);
+        window.scrollTo(0, 0);
+    }, [id]);
 
     // Extract color palette
     useEffect(() => {
@@ -51,31 +50,40 @@ export function AlbumModal({ album, onClose, onAddToTop5, isInTop5 }: AlbumModal
         extractColors();
     }, [album.artwork]);
 
-    const handleBackdropClick = (e: React.MouseEvent) => {
-        if (e.target === e.currentTarget) onClose();
-    };
-
     const formatDuration = (duration: string) => duration;
 
+    // We reuse 'album-modal' classes for styling, but layout is full page now
     return (
-        <div className="album-modal-backdrop" onClick={handleBackdropClick}>
-            <div className="album-modal" ref={modalRef}>
-                <button className="modal-close-btn" onClick={onClose} aria-label="Go back">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    <span>Back</span>
-                </button>
-
+        <div className="album-details-page" style={{ height: '100vh', width: '100vw', background: 'var(--color-bg)' }}>
+            {/* Styling reuse wrapper */}
+            <div className="album-modal" style={{ borderRadius: 0, boxShadow: 'none', animation: 'none' }}>
                 <div className="modal-content">
                     {/* Left Column - Artwork & Palette */}
                     <div className="modal-artwork-section">
-                        <img
-                            src={album.artwork}
-                            alt={`${album.title} by ${album.artist}`}
-                            className="modal-artwork"
-                        />
+                        {/* Editorial Disc Structure */}
+                        <div className="editorial-disc-container">
+                            {/* Rotating Text Ring */}
+                            <div className="text-ring-spinner">
+                                <svg viewBox="0 0 1000 1000" className="text-ring-svg">
+                                    <path id="circlePath" d="M 500, 500 m -420, 0 a 420,420 0 1,1 840,0 a 420,420 0 1,1 -840,0" fill="none" />
+                                    <text className="ring-text">
+                                        <textPath href="#circlePath" startOffset="0%">
+                                            {`${album.title} • ${album.artist} • ${album.title} • ${album.artist} • `}
+                                        </textPath>
+                                    </text>
+                                </svg>
+                            </div>
+
+                            {/* Album Art Disc */}
+                            <div className="disc-art">
+                                <img
+                                    src={album.artwork}
+                                    alt={`${album.title} by ${album.artist}`}
+                                    className="disc-artwork-img"
+                                />
+                                <div className="spindle-dot" />
+                            </div>
+                        </div>
 
                         {/* Color Palette */}
                         {palette.length > 0 && (
@@ -110,11 +118,11 @@ export function AlbumModal({ album, onClose, onAddToTop5, isInTop5 }: AlbumModal
                             </a>
 
                             <button
-                                className={`add-top5-modal-btn ${isInTop5 ? 'added' : ''}`}
+                                className={`add-top5-modal-btn ${isInTop5(album.id) ? 'added' : ''}`}
                                 onClick={() => onAddToTop5(album)}
-                                disabled={isInTop5}
+                                disabled={isInTop5(album.id)}
                             >
-                                {isInTop5 ? '✓ In Your Top 5' : '+ Add to Top 5'}
+                                {isInTop5(album.id) ? '✓ In Your Top 5' : '+ Add to Top 5'}
                             </button>
                         </div>
                     </div>
@@ -157,7 +165,7 @@ export function AlbumModal({ album, onClose, onAddToTop5, isInTop5 }: AlbumModal
                                         <div key={index} className={`reaction-card ${reaction.type}`}>
                                             <p className="reaction-content">"{reaction.content}"</p>
                                             <div className="reaction-source">
-                                                {reaction.type === 'tweet' && (
+                                                {(reaction.type === 'tweet' || reaction.type === 'quote') && (
                                                     <>
                                                         <span className="reaction-author">{reaction.author}</span>
                                                         {reaction.handle && <span className="reaction-handle">{reaction.handle}</span>}
@@ -175,6 +183,13 @@ export function AlbumModal({ album, onClose, onAddToTop5, isInTop5 }: AlbumModal
                     </div>
                 </div>
             </div>
+
+            <Top5Panel
+                albums={top5}
+                onRemove={onRemoveFromTop5}
+                onClear={onClearTop5}
+                onReorder={onReorderTop5}
+            />
         </div>
     );
 }

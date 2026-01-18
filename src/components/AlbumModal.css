@@ -1,135 +1,239 @@
+/* Full Screen Overlay */
 .album-modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
+    background: var(--color-bg);
     z-index: var(--z-modal);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-8);
-    animation: fadeIn var(--duration-normal) var(--ease-out-expo);
+    flex-direction: column;
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .album-modal {
-    position: relative;
-    max-width: 1000px;
-    max-height: 90vh;
     width: 100%;
-    background: var(--color-bg-elevated);
-    border-radius: var(--radius-2xl);
+    height: 100%;
+    background: var(--color-bg);
     overflow: hidden;
-    box-shadow: var(--shadow-xl);
-    animation: modalSlideIn var(--duration-slow) var(--ease-out-expo);
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes modalSlideIn {
+@keyframes slideUp {
     from {
+        transform: translateY(100%);
         opacity: 0;
-        transform: translateY(40px) scale(0.95);
     }
 
     to {
+        transform: translateY(0);
         opacity: 1;
-        transform: translateY(0) scale(1);
     }
 }
 
 .modal-close-btn {
     position: absolute;
-    top: var(--space-4);
-    right: var(--space-4);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    top: var(--space-8);
+    left: var(--space-8);
+    height: 48px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-full);
+    background: transparent;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: var(--space-2);
     color: var(--color-text-secondary);
-    z-index: 10;
-    transition: all var(--duration-fast) var(--ease-out-quart);
+    z-index: 100;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: var(--font-size-sm);
+    letter-spacing: 0.05em;
+    right: auto;
+    /* Override previous right positioning */
+    width: auto;
+    /* Allow width to expand for text */
 }
 
 .modal-close-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--color-surface);
     color: var(--color-text-primary);
+    transform: translateX(-4px);
+    /* Slide left slightly on hover */
+    border-color: var(--color-text-primary);
 }
 
+/* Split Layout */
 .modal-content {
     display: grid;
-    grid-template-columns: 400px 1fr;
-    max-height: 90vh;
-    overflow: hidden;
+    grid-template-columns: 45% 55%;
+    height: 100vh;
+    width: 100%;
 }
 
-/* Artwork Section */
+/* Left: Artwork & Actions (Fixed) */
 .modal-artwork-section {
-    padding: var(--space-8);
+    height: 100%;
+    padding: var(--space-12);
+    background: var(--color-bg-elevated);
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
 }
 
-.modal-artwork {
+/* Editorial Disc Design */
+.editorial-disc-container {
+    position: relative;
     width: 100%;
+    max-width: 550px;
+    /* Slightly larger to accommodate text ring */
     aspect-ratio: 1;
+    margin: 0 auto var(--space-8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    /* Let clicks pass through if needed, though mostly visual */
+}
+
+/* The Disc Itself */
+.disc-art {
+    position: relative;
+    width: 75%;
+    /* Leave room for text ring */
+    height: 75%;
+    border-radius: 50%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    overflow: hidden;
+    /* Mask image to circle */
+}
+
+.disc-artwork-img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    display: block;
+}
+
+/* Central Spindle Dot */
+.spindle-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: #000;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+/* Rotating Text Ring */
+.text-ring-spinner {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    animation: rotateRing 20s linear infinite;
+    pointer-events: none;
+}
+
+.text-ring-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.ring-text {
+    font-size: 22px;
+    /* SVG units: 1000x1000 viewbox -> ~12px rendered size */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 12px;
+    fill: var(--color-text-primary);
+    /* Adapts to dark mode */
+}
+
+/* Animation */
+@keyframes rotateRing {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Palette */
 .modal-palette {
+    position: absolute;
+    bottom: var(--space-8);
+    left: var(--space-8);
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-2);
 }
 
 .palette-title {
-    font-size: var(--font-size-sm);
-    font-weight: 500;
+    font-size: 10px;
+    font-weight: 600;
     color: var(--color-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
 }
 
 .palette-colors {
     display: flex;
-    gap: var(--space-2);
+    gap: 6px;
 }
 
 .palette-color-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: transform var(--duration-fast) var(--ease-out-quart);
-    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .palette-color-btn:hover {
-    transform: scale(1.15);
+    transform: scale(1.2);
 }
 
 /* Actions */
 .modal-actions {
+    width: 100%;
+    max-width: 500px;
     display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-4);
 }
 
-.spotify-btn {
+.spotify-btn,
+.add-top5-modal-btn {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
-    padding: var(--space-4);
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.spotify-btn {
     background: #1DB954;
     color: #000;
-    font-weight: 600;
-    border-radius: var(--radius-lg);
-    transition: all var(--duration-fast) var(--ease-out-quart);
 }
 
 .spotify-btn:hover {
@@ -138,13 +242,9 @@
 }
 
 .add-top5-modal-btn {
-    padding: var(--space-4);
-    background: var(--color-surface);
-    color: var(--color-text-primary);
-    font-weight: 600;
-    border-radius: var(--radius-lg);
+    background: transparent;
     border: 1px solid var(--color-border);
-    transition: all var(--duration-fast) var(--ease-out-quart);
+    color: var(--color-text-primary);
 }
 
 .add-top5-modal-btn:hover:not(:disabled) {
@@ -154,87 +254,90 @@
 
 .add-top5-modal-btn.added {
     background: var(--color-accent);
-    color: #000;
     border-color: var(--color-accent);
+    color: #000;
 }
 
-/* Details Section */
+/* Right: Details (Scrollable) */
 .modal-details-section {
-    padding: var(--space-8);
+    height: 100%;
     overflow-y: auto;
+    padding: var(--space-16) var(--space-20);
     display: flex;
     flex-direction: column;
-    gap: var(--space-8);
+    gap: var(--space-12);
 }
 
 .modal-header {
-    padding-right: var(--space-12);
+    margin-top: var(--space-8);
 }
 
 .modal-title {
-    font-size: var(--font-size-3xl);
-    font-weight: 700;
+    font-size: 4rem;
+    font-weight: 800;
     color: var(--color-text-primary);
-    margin-bottom: var(--space-2);
+    line-height: 1;
+    margin-bottom: var(--space-4);
+    letter-spacing: -0.02em;
 }
 
 .modal-artist {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-2xl);
     color: var(--color-text-secondary);
-    margin-bottom: var(--space-2);
+    font-weight: 400;
 }
 
 .modal-date {
+    display: inline-block;
+    margin-top: var(--space-4);
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    padding: 4px 12px;
+    border-radius: 100px;
 }
 
 /* Section Titles */
 .section-title {
-    font-size: var(--font-size-sm);
-    font-weight: 600;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
     color: var(--color-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--space-4);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-4);
 }
 
 /* Tracklist */
 .track-list {
-    list-style: none;
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
 }
 
 .track-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
     align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    transition: background var(--duration-fast) var(--ease-out-quart);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: background 0.2s;
 }
 
 .track-item:hover {
-    background: var(--color-surface);
+    background: rgba(255, 255, 255, 0.02);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    margin: 0 calc(var(--space-4) * -1);
 }
 
 .track-number {
-    width: 24px;
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
-    text-align: center;
-}
-
-.track-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
 }
 
 .track-title {
+    font-size: var(--font-size-lg);
     font-weight: 500;
     color: var(--color-text-primary);
 }
@@ -242,94 +345,30 @@
 .track-featured {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
+    margin-left: var(--space-2);
 }
 
 .track-duration {
-    font-size: var(--font-size-sm);
+    font-family: monospace;
     color: var(--color-text-muted);
 }
 
 /* Reactions */
 .reactions-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-6);
 }
 
 .reaction-card {
-    padding: var(--space-5);
+    padding: var(--space-6);
     background: var(--color-surface);
     border-radius: var(--radius-lg);
-    border-left: 3px solid var(--color-border);
-}
-
-.reaction-card.tweet {
-    border-left-color: #1DA1F2;
-}
-
-.reaction-card.quote,
-.reaction-card.headline {
-    border-left-color: var(--color-accent);
+    border: 1px solid var(--color-border);
 }
 
 .reaction-content {
-    font-size: var(--font-size-base);
-    color: var(--color-text-primary);
-    line-height: 1.6;
-    margin-bottom: var(--space-3);
-    font-style: italic;
-}
-
-.reaction-source {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-size-sm);
-}
-
-.reaction-author {
-    font-weight: 500;
-    color: var(--color-text-secondary);
-}
-
-.reaction-handle {
-    color: var(--color-text-muted);
-}
-
-.reaction-publication {
-    color: var(--color-text-muted);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .album-modal-backdrop {
-        padding: 0;
-        align-items: flex-end;
-    }
-
-    .album-modal {
-        max-height: 95vh;
-        border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-    }
-
-    .modal-content {
-        grid-template-columns: 1fr;
-    }
-
-    .modal-artwork-section {
-        padding: var(--space-6);
-    }
-
-    .modal-artwork {
-        max-width: 250px;
-        margin: 0 auto;
-    }
-
-    .modal-details-section {
-        padding: var(--space-6);
-    }
-
-    .modal-title {
-        font-size: var(--font-size-2xl);
-    }
+    font-size: var(--font-size-lg);
+    line-height: 1.5;
+    margin-bottom: var(--space-4);
 }
